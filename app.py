@@ -4,7 +4,7 @@ import os
 import string
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])  # Allow your React frontend to make requests
+CORS(app, origins=["http://localhost:5174"])  # Allow your React frontend to make requests
 
 # Directory where GIF files are stored
 app.config['UPLOAD_FOLDER'] = 'ISL_Gifs'  # Ensure your GIFs are placed inside the 'ISL_Gifs' folder
@@ -14,7 +14,7 @@ isl_gif = {
     "birthday": "birthday.gif",
     "goodmorning": "goodmorning.gif",
     "happy": "happy.gif",
-    "thank you": "thankyou.gif",
+    "thankyou": "thank you.gif",
     "apple": "apple.gif"
 }
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./index.css";
 
 const App = () => {
   const [inputText, setInputText] = useState(""); // Store input text
@@ -46,36 +47,44 @@ const App = () => {
   
 
   return (
-    <div style={styles.container}>
-      <h1>English to Sign Language Translator</h1>
+    <>
+    <div style={styles.container} className="everything">
+      <div className="all">
+      <h1>English to Sign Language <br /><span className="orange"> Translation </span>system</h1>
       <div style={styles.inputContainer}>
         <input
           type="text"
           value={inputText}
           onChange={handleInputChange}
           placeholder="Type text to translate..."
-          style={styles.input}
         />
+        <br />
         <button onClick={handleTranslate} style={styles.button}>
           Translate
         </button>
       </div>
+      
 
       {/* Display error message */}
       {error && <p style={styles.error}>{error}</p>}
-
+      </div>
+      </div>
       {/* Display GIFs */}
-      <div style={styles.gifContainer}>
+      <div id="displayer">
+      <span className="cross">x</span>
         {gifs.map((gif, index) => (
+          
           <img
             key={index}
             src={gif}
             alt={`Sign language GIF ${index + 1}`}
             style={styles.gif}
+            className="finalgif"
           />
         ))}
       </div>
-    </div>
+      </>
+     
   );
 };
 
@@ -105,16 +114,18 @@ const styles = {
     marginTop: "10px",
   },
   gifContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    marginTop: "20px",
+    position: "absolute",
   },
   gif: {
-    width: "150px",
-    height: "150px",
+    width: "500px",
+    height: "300px",
     margin: "10px",
   },
+  orange:{
+    color:"rgb(249, 133, 1)",
+  }
+
+
 };
 
 export default App;

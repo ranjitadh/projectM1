@@ -1,22 +1,27 @@
 from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS  # Import CORS for enabling cross-origin requests
+from nltk.stem import PorterStemmer
+from flask_cors import CORS
 import os
 import string
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5174"])  # Allow your React frontend to make requests
+CORS(app, origins=["http://localhost:5174"])
+stemmer = PorterStemmer()
 
-# Directory where GIF files are stored
-app.config['UPLOAD_FOLDER'] = 'ISL_Gifs'  # Ensure your GIFs are placed inside the 'ISL_Gifs' folder
+app.config['UPLOAD_FOLDER'] = 'ISL_Gifs'
 
-# Dictionary mapping words to corresponding GIF filenames
-isl_gif = {
-    "birthday": "birthday.gif",
-    "goodmorning": "goodmorning.gif",
-    "happy": "happy.gif",
-    "thankyou": "thank you.gif",
-    "apple": "apple.gif"
-}
+# ISL words and phrases dataset
+isl_gif = [
+    'birthday','cry', 'good morning', 'finish', 'goodevening', 'good afternoon', 'thank you', 'goodnight', 'dad', 'dear',
+    'happy', 'family', 'fine', 'great', 'man', 'move', 'mistake', 'night', 'open', 'over', 'once', 'only',
+    'other', 'please', 'pick', 'proper', 'quite', 'quit', 'run', 'rate', 'tough', 'tear', 'up', 'down',
+    'right', 'left', 'under', 'van', 'voice', 'where', 'sign', 'language', 'waste', 'sorry', 'what',
+    'wait', 'you', 'yes', 'no', 'year', 'zone', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+]
+
+# Dynamically generate a mapping of stemmed phrases and words to GIF filenames
+stemmed_isl_gif = {stemmer.stem(word): f"{word.replace(' ', '_')}.gif" for word in isl_gif}
 
 # Route to serve static GIF files
 @app.route('/static/<filename>')
@@ -39,13 +44,19 @@ def process_input():
     # Log input text and processed words for debugging
     print(f"Processed input: {input_text}")
 
-    # Generate a list of GIF paths based on the input words
+    # Check the whole stemmed input text against the dataset
+    stemmed_input = stemmer.stem(input_text)
     gif_paths = []
-    for word in input_text.split():
-        if word in isl_gif:
-            # Log matched words for debugging
-            print(f"Found match for word: {word}")
-            gif_paths.append(f"/static/{isl_gif[word]}")  # Format the path to point to the /static/ directory
+
+    # Match stemmed input directly with phrases or split into words if no match is found
+    if stemmed_input in stemmed_isl_gif:
+        gif_paths.append(f"/static/{stemmed_isl_gif[stemmed_input]}")
+    else:
+        # Fall back to splitting the input and checking individual words
+        for word in input_text.split():
+            stemmed_word = stemmer.stem(word)
+            if stemmed_word in stemmed_isl_gif:
+                gif_paths.append(f"/static/{stemmed_isl_gif[stemmed_word]}")
 
     # If no GIFs are found for the given input text
     if not gif_paths:
